@@ -733,6 +733,8 @@ private:
 };
 
 //------------------------------------------------------------------------------
+#include "log4c.h"
+
 
 int main(int argc, char* argv[])
 {
@@ -740,7 +742,7 @@ int main(int argc, char* argv[])
     if (argc != 5)
     {
         std::cerr <<
-            "Usage: advanced-server <address> <port> <config> <threads>\n" <<
+            "Usage: uucc_setavatar <address> <port> <config> <worker threads>\n" <<
             "Example:\n" <<
             "    advanced-server 0.0.0.0 8080 ./config.json 1\n";
         return EXIT_FAILURE;
@@ -752,13 +754,12 @@ int main(int argc, char* argv[])
     auto const threads = std::max<int>(1, std::atoi(argv[4]));
 
 if(!CONFIG_USER_PTR_VALID(doc_root)){
+	log4c_log("error 1");
 	return EXIT_FAILURE;
 }
 
-
     // The io_context is required for all I/O
-    boost::asio::io_context ioc{threads};
-
+    boost::asio::io_context ioc{1+threads};
     // Create and launch a listening port
     std::make_shared<listener>(
         ioc,
@@ -806,8 +807,8 @@ std::cout<<"starting: "
 
     // Run the I/O service on the requested number of threads
     std::vector<std::thread> v;
-    v.reserve(threads - 1);
-    for(auto i = threads - 1; i > 0; --i)
+    v.reserve(threads);
+    for(auto i=0;i<threads;++i)
         v.emplace_back(
         [&ioc]
         {

@@ -8,7 +8,7 @@
 #define CONFIG_USER_PTR_T void*
 
 #define CONFIG_USER_PTR_INIT(x) i_scgi_obj_init(std::string_view(x))
-#define CONFIG_USER_PTR_VALID(x) i_scgi_obj_isnull(x)
+#define CONFIG_USER_PTR_VALID(x) !i_scgi_obj_isnull(x)
 #define CONFIG_USER_PTR_TERM(x) i_scgi_obj_fini(x)
 
 #define CONFIG_USER_CALLBACK(a,b) my_workload_1(a,b)

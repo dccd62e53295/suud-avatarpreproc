@@ -1,0 +1,2 @@
+#define uucc_VERSION_MAJOR @uucc_VERSION_MAJOR@
+#define uucc_VERSION_MINOR @uucc_VERSION_MINOR@

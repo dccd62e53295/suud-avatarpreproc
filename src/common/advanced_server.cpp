@@ -37,7 +37,7 @@
 #include <boost/algorithm/algorithm.hpp>
 #include <boost/algorithm/string.hpp>
 
-
+#include "log4c.h"
 // Returns a bad request response
 template<class Body, class Allocator>
 boost::beast::http::response<boost::beast::http::string_body> 
@@ -211,7 +211,7 @@ handle_request(
     boost::beast::http::request<Body, boost::beast::http::basic_fields<Allocator>>&& req,
     Send&& send)
 {
-
+/*
     // Make sure we can handle the method
     if( req.method() != boost::beast::http::verb::get &&
         req.method() != boost::beast::http::verb::head)
@@ -222,7 +222,7 @@ handle_request(
         req.target()[0] != '/' ||
         req.target().find("..") != boost::beast::string_view::npos)
         return send(res_bad_request(req,"Illegal request-target"));
-/*
+
     // Build the path to the requested file
     std::string path = path_cat(doc_root, req.target());
     if(req.target().back() == '/')
@@ -733,7 +733,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-#include "log4c.h"
+
 
 
 int main(int argc, char* argv[])

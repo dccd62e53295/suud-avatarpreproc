@@ -31,14 +31,12 @@ if(0==v1.error){
 	v3.i=htole32((int32_t)v1.out.size());
 	v2<<v3.s;
 	v2<<v1.out;
-
-	p1.res_status=200;
 }else{
 	v3.i=htole32(v1.error);
 	v2<<v3.s;
-	p1.res_status=400;
 }
 
+p1.res_status=200;
 p1.processed=true;
 p1.res_content_type="";
 p1.res_data=v2.str();

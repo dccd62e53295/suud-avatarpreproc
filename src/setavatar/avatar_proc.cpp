@@ -90,7 +90,7 @@ this->hash=sha3_256(v8,4*512*512);
 			hash_dup[0]=r;
 			hash_dup[1]=g;
 			hash_dup[2]=b;
-			hash_dup[a]=a;
+			hash_dup[3]=a;
 
 			EVP_DigestUpdate(context,hash_dup,4);
 		}
@@ -100,7 +100,7 @@ this->hash=sha3_256(v8,4*512*512);
 	  std::string output(reinterpret_cast<char*>(digest), digest_length);
 	  OPENSSL_free(digest);
 	  //return output;
-	  if(alpha_sum<(512*512*256/2)){
+	  if(alpha_sum<(512*512*256/4)){
 		  this->error=2;
 		  return false;
 	  }

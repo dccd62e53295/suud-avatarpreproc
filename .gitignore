@@ -12,4 +12,5 @@ _deps
 
 .cproject
 .project
+.vscode
 build

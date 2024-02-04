@@ -1,6 +1,5 @@
 
 #include <cstring>
-#include <sstream>
 
 #include "route.hpp"
 #include "avatar_proc.hpp"
@@ -15,29 +14,46 @@ v1.in=p1.req_data;
 
 v1.run();
 
-std::stringstream v2;
-union {
-	char s[4];
-	int32_t i;
-}v3;
+char* pk_d=nullptr;
+std::size_t pk_len=0;
 
 if(0==v1.error){
-	v3.i=htole32(0);
-	v2<<v3.s;
+std::size_t hashlen=v1.hash.size();
+std::size_t imglen=v1.out.size();
 
-	v3.i=htole32((int32_t)v1.hash.size());
-	v2<<v3.s;
-	v2<<v1.hash;
-	v3.i=htole32((int32_t)v1.out.size());
-	v2<<v3.s;
-	v2<<v1.out;
+pk_len=sizeof(int32_t)*3+hashlen+imglen;
+pk_d=new char[pk_len];
+std::size_t pk_off=0;
+
+int32_t v4=0;
+
+v4=htole32(0);
+memcpy(pk_d+pk_off,&v4,sizeof(int32_t));
+pk_off+=sizeof(int32_t);
+
+v4=htole32(static_cast<int32_t>(hashlen));
+memcpy(pk_d+pk_off,&v4,sizeof(int32_t));
+pk_off+=sizeof(int32_t);
+
+memcpy(pk_d+pk_off,v1.hash.data(),hashlen);
+pk_off+=hashlen;
+
+v4=htole32(static_cast<int32_t>(imglen));
+memcpy(pk_d+pk_off,&v4,sizeof(int32_t));
+pk_off+=sizeof(int32_t);
+
+memcpy(pk_d+pk_off,v1.out.data(),imglen);
+pk_off+=imglen;
 }else{
-	v3.i=htole32(v1.error);
-	v2<<v3.s;
+pk_len=sizeof(int32_t);
+pk_d=new char[pk_len];
+int32_t v4=htole32(static_cast<int32_t>(v1.error));
+memcpy(pk_d,&v4,sizeof(int32_t));
 }
 
 p1.res_status=200;
 p1.processed=true;
 p1.res_content_type="";
-p1.res_data=v2.str();
+p1.res_data=std::string(pk_d,pk_len);
+delete[] pk_d;
 };

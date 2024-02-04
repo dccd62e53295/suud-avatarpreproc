@@ -109,7 +109,11 @@ this->hash=sha3_256(v8,4*512*512);
 
 struct boost::gil::image_write_info<boost::gil::png_tag> ve;
 ve._compression_level=9;
+ve._compression_mem_level=MAX_MEM_LEVEL;
 ve._compression_strategy=Z_FILTERED;
+ve._compression_window_bits=15;
+ve._compression_method=8;
+ve._compression_buffer_size=8192;
 std::stringstream v8(std::ios_base::in|std::ios_base::out|std::ios_base::binary);
 boost::gil::write_view(v8,v7,ve);
 this->out=v8.str();

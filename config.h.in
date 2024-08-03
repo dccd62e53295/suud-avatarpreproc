@@ -1,2 +1,2 @@
-#define uucc_VERSION_MAJOR @uucc_VERSION_MAJOR@
-#define uucc_VERSION_MINOR @uucc_VERSION_MINOR@
+#define suud_VERSION_MAJOR @suud_VERSION_MAJOR@
+#define suud_VERSION_MINOR @suud_VERSION_MINOR@

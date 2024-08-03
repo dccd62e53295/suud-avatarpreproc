@@ -742,9 +742,9 @@ int main(int argc, char* argv[])
     if (argc != 5)
     {
         std::cerr <<
-            "Usage: uucc_setavatar <address> <port> <config> <worker threads>\n" <<
+            "Usage: "<<argv[0]<<" <address> <port> <config> <worker threads>\n" <<
             "Example:\n" <<
-            "    advanced-server 0.0.0.0 8080 ./config.json 1\n";
+            "    "<<argv[0]<<" 0.0.0.0 8080 ./config.json 1\n";
         return EXIT_FAILURE;
     }
     auto const address = boost::asio::ip::make_address(argv[1]);

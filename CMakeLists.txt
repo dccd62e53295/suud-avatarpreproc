@@ -13,13 +13,14 @@ find_package(PkgConfig REQUIRED)
 # https://cmake.org/cmake/help/latest/module/FindOpenSSL.html
 find_package(OpenSSL REQUIRED)
 # https://stackoverflow.com/questions/67812541
-pkg_check_modules(JSONCPP jsoncpp)
+pkg_check_modules(JSONCPP jsoncpp REQUIRED)
 find_package(PNG 1.6 REQUIRED)
 # https://www.boost.org/doc/libs/1_74_0/libs/gil/doc/html/io.html#supported-platforms
 find_package(TIFF REQUIRED)
 find_package(JPEG REQUIRED)
-pkg_check_modules(RAW libraw)
+pkg_check_modules(RAW libraw REQUIRED)
 find_package(ZLIB REQUIRED)
+pkg_check_modules(WEBP libwebp REQUIRED)
 
 # shared source
 file(GLOB_RECURSE project_src_common
@@ -73,4 +74,5 @@ TIFF::TIFF
 JPEG::JPEG
 ${RAW_LIBRARIES}
 ZLIB::ZLIB
+${WEBP_LIBRARIES}
 )

@@ -24,8 +24,4 @@ class i_scgi_r{
 	void* context=nullptr;
 };
 
-void* i_scgi_obj_init(std::string_view);
-void i_scgi_obj_fini(void*);
-bool i_scgi_obj_isnull(void*);
-
 void i_scgi_handle_req(i_scgi_r&);

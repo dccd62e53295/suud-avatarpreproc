@@ -20,7 +20,11 @@ find_package(TIFF REQUIRED)
 find_package(JPEG REQUIRED)
 pkg_check_modules(RAW libraw REQUIRED)
 find_package(ZLIB REQUIRED)
-pkg_check_modules(WEBP libwebp REQUIRED)
+# https://chromium.googlesource.com/webm/libwebp/+/04834acae7aaff14eb5af794174bce0d158c40fc/cmake/deps.cmake#100
+pkg_check_modules(Webp libwebp REQUIRED)
+pkg_check_modules(WebpDemux libwebpdemux REQUIRED)
+pkg_check_modules(WebpMux libwebpmux REQUIRED)
+find_package(GIF REQUIRED)
 
 # shared source
 file(GLOB_RECURSE project_src_common
@@ -74,5 +78,8 @@ TIFF::TIFF
 JPEG::JPEG
 ${RAW_LIBRARIES}
 ZLIB::ZLIB
-${WEBP_LIBRARIES}
+${Webp_LIBRARIES}
+${WebpDemux_LIBRARIES}
+${WebpMux_LIBRARIES}
+GIF::GIF
 )

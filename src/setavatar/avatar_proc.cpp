@@ -71,14 +71,14 @@ this->hash=sha3_256(v8,4*512*512);
 }*/
 {
 	uint32_t alpha_sum=0;
-	uint8_t hash_dup[4];
-
+	
 	  uint32_t digest_length = SHA256_DIGEST_LENGTH;
 	  const EVP_MD* algorithm = EVP_sha3_256();
 	  uint8_t* digest = static_cast<uint8_t*>(OPENSSL_malloc(digest_length));
 	  EVP_MD_CTX* context = EVP_MD_CTX_new();
 	  EVP_DigestInit_ex(context, algorithm, nullptr);
 	for (int y = 0; y < 512; ++y) {
+		uint8_t hash_dup[512*4];
 		for (int x = 0; x < 512; ++x) {
 			boost::gil::rgba8_pixel_t& pixel = v7(x, y);
 			uint8_t r = boost::gil::get_color(pixel, boost::gil::red_t());
@@ -87,13 +87,14 @@ this->hash=sha3_256(v8,4*512*512);
 			uint8_t a = boost::gil::get_color(pixel, boost::gil::alpha_t());
 
 			alpha_sum+=a;
-			hash_dup[0]=r;
-			hash_dup[1]=g;
-			hash_dup[2]=b;
-			hash_dup[3]=a;
 
-			EVP_DigestUpdate(context,hash_dup,4);
+			uint8_t hash_dup_offset=x*4;
+			hash_dup[hash_dup_offset|0]=r;
+			hash_dup[hash_dup_offset|1]=g;
+			hash_dup[hash_dup_offset|2]=b;
+			hash_dup[hash_dup_offset|3]=a;
 		}
+		EVP_DigestUpdate(context,hash_dup,512*4);
 	}
 	  EVP_DigestFinal_ex(context, digest, &digest_length);
 	  EVP_MD_CTX_destroy(context);

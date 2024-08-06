@@ -1,4 +1,4 @@
-
+#pragma once
 //#include "mywait.h"
 #include "route.hpp"
 
@@ -7,7 +7,7 @@
 
 #define CONFIG_USER_PTR_T void*
 
-#define CONFIG_USER_PTR_INIT(x) nullptr
+#define CONFIG_USER_PTR_INIT(x) i_scgi_obj_init(x)
 #define CONFIG_USER_PTR_VALID(x) true
 #define CONFIG_USER_PTR_TERM(x)
 
@@ -25,6 +25,13 @@ switch(req.method()){
 	c.req_path=std::string(req.target());
 	c.req_data=req.body();
 	c.req_type=static_cast<std::underlying_type<boost::beast::http::verb>::type>(req.method());
+
+    auto content_type = req.find(boost::beast::http::field::content_type);
+    if (content_type != req.end()) {
+        c.req_content_type=std::string(content_type->value());
+    } else {
+        c.req_content_type="";
+    }
 
 	c.context=dbc;
 	

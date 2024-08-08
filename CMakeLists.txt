@@ -71,7 +71,6 @@ PNG::PNG
 )
 
 target_link_libraries(imgci
-PRIVATE OpenSSL::Crypto
 ${JSONCPP_LIBRARIES}
 PNG::PNG
 TIFF::TIFF

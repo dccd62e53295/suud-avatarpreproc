@@ -12,7 +12,6 @@
 
 #include "gifdec.h"
 #include "handler_list.hpp"
-#include "route.hpp"
 
 #define DEBUG
 
@@ -53,7 +52,7 @@ enum {
   METADATA_ALL  = METADATA_ICC | METADATA_XMP
 };
 
-std::string controller_preview_gif_split1(std::string const&p1_in_file) {
+std::string controller_preview_gif(std::string const&p1_in_file) {
   int transparent_index = GIF_INDEX_INVALID;  // Opaque by default.
   std::string result="";
   int gif_error = GIF_ERROR;
@@ -94,10 +93,10 @@ std::string controller_preview_gif_split1(std::string const&p1_in_file) {
   WebPDataInit(&webp_data);
   WebPDataInit(&icc_data);
   WebPDataInit(&xmp_data);
-
+/** settings */
 enc_options.allow_mixed = 1;
 config.lossless = 0;
-config.quality=66;
+config.quality=50;
 config.method=6;
 enc_options.minimize_size = 1;
 enc_options.verbose = 0;
@@ -398,12 +397,4 @@ result=std::string(reinterpret_cast<const char*>(webp_data.bytes),webp_data.size
     delete gif_file;
   }
 return result;
-};
-
-void controller_preview_gif(i_scgi_r& p1){
-const std::string v1=controller_preview_gif_split1(p1.req_data);
-if(!v1.empty()){
-  p1.res_data=v1;
-  p1.processed=true;
-}
 };

@@ -1,12 +1,13 @@
 #pragma once
-class i_scgi_r;
 
-void controller_preview_gif(i_scgi_r& p1);
+#include <string>
+
+std::string controller_preview_gif(std::string const& p1);
 
 // process oversized webp
-void controller_preview_webp(i_scgi_r& p1);
+std::string controller_preview_webp(std::string const& p1);
 
-
-
+std::string controller_preview_jpg(std::string const& p1);
+std::string controller_preview_png(std::string const& p1);
 
 

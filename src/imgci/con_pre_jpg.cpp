@@ -40,7 +40,8 @@ auto view = boost::gil::view(v1);
     uint8_t* output_data = nullptr;
     size_t output_size = WebPEncodeRGB(rgb_data.data(), v1.width(), v1.height(), v1.width() * 3, 66, &output_data);
     if (output_size == 0) {
-        throw std::runtime_error("Error encoding image to WebP format");
+        //throw std::runtime_error("Error encoding image to WebP format");
+        return "";
     }
 
     // Step 3: Store the encoded WebP data in a std::string

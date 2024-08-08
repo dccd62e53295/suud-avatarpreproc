@@ -39,7 +39,8 @@ webp_index = y * width + x
     uint8_t* output_data = nullptr;
     size_t output_size = WebPEncodeRGBA(rgba_data.data(), v1.width(), v1.height(), v1.width() * 4, 66, &output_data);
     if (output_size == 0) {
-        throw std::runtime_error("Error encoding image to WebP format");
+        //throw std::runtime_error("Error encoding image to WebP format");
+        return "";
     }
 
     // Step 3: Store the encoded WebP data in a std::string

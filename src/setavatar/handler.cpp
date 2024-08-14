@@ -1,5 +1,6 @@
 
 #include <cstring>
+#include <iostream>
 
 #include "route.hpp"
 #include "avatar_proc.hpp"
@@ -12,7 +13,14 @@ if(p1.req_data.size()<80){
 AvatarProcess v1;
 v1.in=p1.req_data;
 
+try{
 v1.run();
+}catch(std::exception v2){
+	std::cout<<"error while process image file:"
+	<<typeid(v2).name()<<std::endl<<v2.what()<<std::endl;
+	v1.error=1;
+}
+
 
 char* pk_d=nullptr;
 std::size_t pk_len=0;

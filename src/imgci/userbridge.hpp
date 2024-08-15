@@ -3,7 +3,7 @@
 #include "route.hpp"
 
 #define CONFIG_HTTP_READ_TIMEOUT 30
-#define CONFIG_HTTP_READ_BODY_MAX 1048576
+#define CONFIG_HTTP_READ_BODY_MAX 16777216
 
 #define CONFIG_USER_PTR_T void*
 

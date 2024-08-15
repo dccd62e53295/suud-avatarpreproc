@@ -33,10 +33,16 @@ void i_scgi_handle_req(i_scgi_r& p1){
 p1.processed=false;
 auto v1=route_known_handlers.find(p1.req_content_type);
 if (v1 != route_known_handlers.end()) {
+try{
 std::string v2=v1->second(p1.req_data);
 if(!v2.empty()){
 p1.res_data=v2;
 p1.processed=true;
+}
+}catch(const std::exception& v2){
+	std::cout<<"error while process image file:"
+	<<typeid(v2).name()<<std::endl<<v2.what()<<std::endl;
+p1.processed=false;
 }
 }
 };

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <iostream>
 
 #include <webp/encode.h>
 #include <webp/mux.h>
@@ -18,12 +19,14 @@
 // Struct to hold the GIF data and the current position
 struct GifData {
     const std::string& data;
-    size_t pos;
+    std::size_t pos;
 };
 
 // Custom input function to read from the std::string buffer
 int ReadGifFromMemory(GifFileType* gif, GifByteType* bytes, int size) {
     GifData* gifData = reinterpret_cast<GifData*>(gif->UserData);
+
+    std::cout<<"input pos:"<<gifData->pos<<" , len:"<<size<<std::endl;
     
     if (gifData->pos + size > gifData->data.size()) {
         size = gifData->data.size() - gifData->pos; // Avoid reading beyond the buffer size
@@ -113,9 +116,9 @@ enc_options.kmax = config.lossless ? 17 : 5;
   //gif = DGifOpenFromString(p1_in_file);
 
     gif_file = new GifData{p1_in_file, 0};
-    gif = DGifOpen(reinterpret_cast<void*>(gif_file), ReadGifFromMemory, NULL);
+    gif = DGifOpen(reinterpret_cast<void*>(gif_file), ReadGifFromMemory, &gif_error);
     if (gif == NULL) {
-        //std::cerr << "Failed to open GIF from memory: " << GifErrorString(gifFile->Error) << std::endl;
+        std::cerr << "Failed to open GIF from memory: " << GifErrorString(gif_error) << std::endl;
         goto End;
     } else {
         gif->UserData = reinterpret_cast<void*>(gif_file);
@@ -125,12 +128,18 @@ enc_options.kmax = config.lossless ? 17 : 5;
   done = 0;
   do {
     GifRecordType type;
-    if (DGifGetRecordType(gif, &type) == GIF_ERROR) goto End;
+    if (DGifGetRecordType(gif, &type) == GIF_ERROR) {
+      std::cerr<<"DGifGetRecordType error"<<std::endl;
+      goto End;
+    }
     switch (type) {
       case IMAGE_DESC_RECORD_TYPE: {
         GIFFrameRect gif_rect;
         GifImageDesc* const image_desc = &gif->Image;
-        if (!DGifGetImageDesc(gif)) goto End;
+        if (!DGifGetImageDesc(gif)) {
+          std::cerr<<"DGifGetImageDesc error"<<std::endl;
+          goto End;
+        }
         if (frame_number == 0) {
 #ifdef DEBUG
             printf("Canvas screen: %d x %d\n", gif->SWidth, gif->SHeight);
@@ -143,6 +152,7 @@ enc_options.kmax = config.lossless ? 17 : 5;
             gif->SWidth = image_desc->Width;
             gif->SHeight = image_desc->Height;
             if (gif->SWidth <= 0 || gif->SHeight <= 0) {
+              std::cerr<<"height or width invalid:("<<gif->SWidth<<","<<gif->SHeight<<")"<<std::endl;
               goto End;
             }
 #ifdef DEBUG
@@ -154,7 +164,10 @@ enc_options.kmax = config.lossless ? 17 : 5;
           frame.width = gif->SWidth;
           frame.height = gif->SHeight;
           frame.use_argb = 1;
-          if (!WebPPictureAlloc(&frame)) goto End;
+          if (!WebPPictureAlloc(&frame)) {
+            std::cerr<<"WebPPictureAlloc error"<<std::endl;
+            goto End;
+          }
           GIFClearPic(&frame, NULL);
           if (!(WebPPictureCopy(&frame, &curr_canvas) &&
                 WebPPictureCopy(&frame, &prev_canvas))) {
@@ -181,6 +194,7 @@ enc_options.kmax = config.lossless ? 17 : 5;
           image_desc->Height = gif->SHeight;
         }
         if (!GIFReadFrame(gif, transparent_index, &gif_rect, &frame)) {
+          std::cerr<<"GIFReadFrame error"<<std::endl;
           goto End;
         }
         // Blend frame rectangle with previous canvas to compose full canvas.
@@ -217,6 +231,7 @@ enc_options.kmax = config.lossless ? 17 : 5;
         int extension;
         GifByteType* data = NULL;
         if (DGifGetExtension(gif, &extension, &data) == GIF_ERROR) {
+          std::cerr<<"DGifGetExtension error"<<std::endl;
           goto End;
         }
         if (data == NULL) continue;
@@ -227,6 +242,7 @@ enc_options.kmax = config.lossless ? 17 : 5;
           case GRAPHICS_EXT_FUNC_CODE: {
             if (!GIFReadGraphicsExtension(data, &frame_duration, &orig_dispose,
                                           &transparent_index)) {
+              std::cerr<<"GIFReadGraphicsExtension error"<<std::endl;
               goto End;
             }
             break;
@@ -239,6 +255,7 @@ enc_options.kmax = config.lossless ? 17 : 5;
             if (!memcmp(data + 1, "NETSCAPE2.0", 11) ||
                 !memcmp(data + 1, "ANIMEXTS1.0", 11)) {
               if (!GIFReadLoopCount(gif, &data, &loop_count)) {
+                std::cerr<<"GIFReadLoopCount error"<<std::endl;
                 goto End;
               }
 #ifdef DEBUG
@@ -257,6 +274,7 @@ enc_options.kmax = config.lossless ? 17 : 5;
               if (is_xmp || is_icc) {
                 if (!GIFReadMetadata(gif, &data,
                                      is_xmp ? &xmp_data : &icc_data)) {
+                  std::cerr<<"GIFReadMetadata error"<<std::endl;
                   goto End;
                 }
                 if (is_icc) {
@@ -273,7 +291,10 @@ enc_options.kmax = config.lossless ? 17 : 5;
           }
         }
         while (data != NULL) {
-          if (DGifGetExtensionNext(gif, &data) == GIF_ERROR) goto End;
+          if (DGifGetExtensionNext(gif, &data) == GIF_ERROR) {
+            std::cerr<<"DGifGetExtensionNext error"<<std::endl;
+            goto End;
+          }
         }
         break;
       }
@@ -296,6 +317,7 @@ enc_options.kmax = config.lossless ? 17 : 5;
   }
   if (!WebPAnimEncoderAssemble(enc, &webp_data)) {
     fprintf(stderr, "%s\n", WebPAnimEncoderGetError(enc));
+    std::cerr<<"WebPAnimEncoderGetError error"<<std::endl;
     goto End;
   }
   // If there's only one frame, we don't need to handle loop count.

@@ -17,7 +17,7 @@
 #include <openssl/sha.h>
 
 //perform the SHA3-256 hash
-std::string inline sha3_256(const char* input_p,size_t input_l)
+inline std::string sha3_256(const char* input_p,size_t input_l)
 {
   uint32_t digest_length = SHA256_DIGEST_LENGTH;
   const EVP_MD* algorithm = EVP_sha3_256();
@@ -30,7 +30,7 @@ std::string inline sha3_256(const char* input_p,size_t input_l)
   std::string output(reinterpret_cast<char*>(digest), digest_length);
   OPENSSL_free(digest);
   return output;
-}
+};
 
 inline void process_rgb(AvatarProcess* v0,std::stringstream& v3,boost::gil::rgba8_view_t& v7){
 boost::gil::rgb8_image_t v1;
@@ -119,8 +119,10 @@ bool AvatarProcess::run(){
 //https://stackoverflow.com/questions/16259659/read-a-jpeg-image-from-memory-with-boostgil
 //https://stackoverflow.com/questions/61656110/how-to-read-image-info-from-python-bytes-string-using-boostgil
 //https://www.boost.org/doc/libs/1_81_0/libs/gil/doc/html/io.html#reading-and-writing-in-memory-buffers
-std::stringstream v1(std::ios_base::in|std::ios_base::out|std::ios_base::binary);
-v1.write(this->in.c_str(),this->in.size());
+std::stringstream v1(this->in,std::ios::in|std::ios::out|std::ios::binary);
+v1.clear();
+v1.seekg(0,std::ios::beg);
+//v1.write(this->in.c_str(),this->in.size());
 
 std::size_t v2=0;
 {
@@ -180,10 +182,3 @@ this->out=v7.str();
 this->error=0;
 return true;
 };
-
-
-
-
-
-
-

@@ -15,7 +15,7 @@ v1.in=p1.req_data;
 
 try{
 v1.run();
-}catch(std::exception v2){
+}catch(const std::exception& v2){
 	std::cout<<"error while process image file:"
 	<<typeid(v2).name()<<std::endl<<v2.what()<<std::endl;
 	v1.error=1;
